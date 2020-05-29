@@ -1,5 +1,5 @@
 {
-  "allowDirectMerges": ["gh-pages", "docs"],
+  "allowDirectMerges": ["gh-pages", "docs", "master"],
   "allowBotCommands": false,
   "internalRepository": "www"
 }
