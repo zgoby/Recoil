@@ -269,19 +269,19 @@ function RecoilRoot({
 }: Props): ReactElement {
   // prettier-ignore
   // @fb-only: useEffect(() => {
-    // @fb-only: if (gkx('recoil_usage_logging')) {
-      // @fb-only: try {
-        // @fb-only: RecoilUsageLogFalcoEvent.log(() => ({
-          // @fb-only: type: RecoilusagelogEvent.RECOIL_ROOT_MOUNTED,
-          // @fb-only: path: URI.getRequestURI().getPath(),
-        // @fb-only: }));
-      // @fb-only: } catch {
-        // @fb-only: recoverableViolation(
-          // @fb-only: 'Error when logging Recoil Usage event',
-          // @fb-only: 'recoil',
-        // @fb-only: );
-      // @fb-only: }
-    // @fb-only: }
+  // @fb-only: if (gkx('recoil_usage_logging')) {
+  // @fb-only: try {
+  // @fb-only: RecoilUsageLogFalcoEvent.log(() => ({
+  // @fb-only: type: RecoilusagelogEvent.RECOIL_ROOT_MOUNTED,
+  // @fb-only: path: URI.getRequestURI().getPath(),
+  // @fb-only: }));
+  // @fb-only: } catch {
+  // @fb-only: recoverableViolation(
+  // @fb-only: 'Error when logging Recoil Usage event',
+  // @fb-only: 'recoil',
+  // @fb-only: );
+  // @fb-only: }
+  // @fb-only: }
   // @fb-only: }, []);
 
   let storeState; // eslint-disable-line prefer-const
@@ -348,9 +348,6 @@ function RecoilRoot({
       replaced = replacer(nextTree);
     } finally {
       stateReplacerIsBeingExecuted = false;
-    }
-    if (replaced === nextTree) {
-      return;
     }
 
     if (__DEV__) {
