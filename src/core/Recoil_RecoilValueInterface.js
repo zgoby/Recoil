@@ -124,19 +124,23 @@ type Action<T> =
 function applyAction(store: Store, state: TreeState, action: Action<mixed>) {
   if (action.type === 'set') {
     const {recoilValue, valueOrUpdater} = action;
+    // 处理数据，是值直接返回
     const newValue = valueFromValueOrUpdater(
       store,
       state,
       recoilValue,
       valueOrUpdater,
     );
+    // 更新value值
     const [depMap, writes] = setNodeValue(
       store,
       state,
       recoilValue.key,
       newValue,
     );
+    // 处理graph
     saveDependencyMapToStore(depMap, store, state.version);
+    //
     for (const [key, loadable] of writes.entries()) {
       writeLoadableToTreeState(state, key, loadable);
     }
@@ -186,6 +190,7 @@ function writeLoadableToTreeState(
 }
 
 function applyActionsToStore(store, actions) {
+  // replaceState生成默认nextTree并返回处理，最终形成
   store.replaceState(state => {
     const newState = copyTreeState(state);
     for (const action of actions) {
@@ -210,6 +215,7 @@ function queueOrPerformStateUpdate(
     }
     actions.push(action);
   } else {
+    // 暂时返回了fn
     Tracing.trace(message, key, () => applyActionsToStore(store, [action]));
   }
 }

@@ -143,6 +143,7 @@ type BaseAtomOptions<T> = $ReadOnly<{
 function baseAtom<T>(options: BaseAtomOptions<T>): RecoilState<T> {
   const {key, persistence_UNSTABLE: persistence} = options;
 
+  // freeze({state: 'hasValue',value, {get,set}})
   let defaultLoadable: Loadable<T> = isPromise(options.default)
     ? loadableWithPromise(
         options.default
@@ -433,6 +434,7 @@ function baseAtom<T>(options: BaseAtomOptions<T>): RecoilState<T> {
     return [new Map(), new Map().set(key, loadableWithValue(newValue))];
   }
 
+  // defaultLoadable, recoilValues, nodes;return RecoilValueClasses{key: ...}
   const node = registerNode(
     ({
       key,
@@ -454,28 +456,29 @@ function baseAtom<T>(options: BaseAtomOptions<T>): RecoilState<T> {
   return node;
 }
 
-// prettier-ignore
+// prettier-ignore只是注册nodes,recoilValues，外加一些处理函数
 function atom<T>(options: AtomOptions<T>): RecoilState<T> {
   const {
     default: optionsDefault,
     // @fb-only: scopeRules_APPEND_ONLY_READ_THE_DOCS,
     ...restOptions
   } = options;
-  if (isRecoilValue(optionsDefault)
+  if (
+    isRecoilValue(optionsDefault)
     // Continue to use atomWithFallback for promise defaults for scoped atoms
     // for now, since scoped atoms don't support async defaults
-   // @fb-only: || (isPromise(optionsDefault) && scopeRules_APPEND_ONLY_READ_THE_DOCS)
+    // @fb-only: || (isPromise(optionsDefault) && scopeRules_APPEND_ONLY_READ_THE_DOCS)
   ) {
     return atomWithFallback<T>({
       ...restOptions,
       default: optionsDefault,
       // @fb-only: scopeRules_APPEND_ONLY_READ_THE_DOCS,
     });
-  // @fb-only: } else if (scopeRules_APPEND_ONLY_READ_THE_DOCS && !isPromise(optionsDefault)) {
+    // @fb-only: } else if (scopeRules_APPEND_ONLY_READ_THE_DOCS && !isPromise(optionsDefault)) {
     // @fb-only: return scopedAtom<T>({
-      // @fb-only: ...restOptions,
-      // @fb-only: default: optionsDefault,
-      // @fb-only: scopeRules_APPEND_ONLY_READ_THE_DOCS,
+    // @fb-only: ...restOptions,
+    // @fb-only: default: optionsDefault,
+    // @fb-only: scopeRules_APPEND_ONLY_READ_THE_DOCS,
     // @fb-only: });
   } else {
     return baseAtom<T>({...restOptions, default: optionsDefault});

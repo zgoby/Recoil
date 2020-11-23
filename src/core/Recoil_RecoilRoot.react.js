@@ -42,6 +42,9 @@ const nullthrows = require('../util/Recoil_nullthrows');
 const Tracing = require('../util/Recoil_Tracing');
 const unionSets = require('../util/Recoil_unionSets');
 // @fb-only: const gkx = require('gkx');
+const {
+  getRecoilValueAsLoadable,
+} = require('../core/Recoil_RecoilValueInterface');
 
 type Props = {
   initializeState_DEPRECATED?: ({
@@ -269,19 +272,19 @@ function RecoilRoot({
 }: Props): ReactElement {
   // prettier-ignore
   // @fb-only: useEffect(() => {
-    // @fb-only: if (gkx('recoil_usage_logging')) {
-      // @fb-only: try {
-        // @fb-only: RecoilUsageLogFalcoEvent.log(() => ({
-          // @fb-only: type: RecoilusagelogEvent.RECOIL_ROOT_MOUNTED,
-          // @fb-only: path: URI.getRequestURI().getPath(),
-        // @fb-only: }));
-      // @fb-only: } catch {
-        // @fb-only: recoverableViolation(
-          // @fb-only: 'Error when logging Recoil Usage event',
-          // @fb-only: 'recoil',
-        // @fb-only: );
-      // @fb-only: }
-    // @fb-only: }
+  // @fb-only: if (gkx('recoil_usage_logging')) {
+  // @fb-only: try {
+  // @fb-only: RecoilUsageLogFalcoEvent.log(() => ({
+  // @fb-only: type: RecoilusagelogEvent.RECOIL_ROOT_MOUNTED,
+  // @fb-only: path: URI.getRequestURI().getPath(),
+  // @fb-only: }));
+  // @fb-only: } catch {
+  // @fb-only: recoverableViolation(
+  // @fb-only: 'Error when logging Recoil Usage event',
+  // @fb-only: 'recoil',
+  // @fb-only: );
+  // @fb-only: }
+  // @fb-only: }
   // @fb-only: }, []);
 
   let storeState; // eslint-disable-line prefer-const
@@ -349,7 +352,12 @@ function RecoilRoot({
     } finally {
       stateReplacerIsBeingExecuted = false;
     }
-    if (replaced === nextTree) {
+    if (
+      getRecoilValueAsLoadable(storeRef.current, recoilValue, replaced)
+        .contents === getRecoilValueAsLoadable(nextTree).contents &&
+      getRecoilValueAsLoadable(storeRef.current, recoilValue, replaced)
+        .state === getRecoilValueAsLoadable(nextTree).state
+    ) {
       return;
     }
 
@@ -421,6 +429,7 @@ function RecoilRoot({
     </AppContext.Provider>
   );
 }
+// RecoilRoot：初始化storeState，并把store{getState,replaceState,getGraph,subscribeToTransactions,addTransactionMetadata}给context
 
 module.exports = {
   useStoreRef,

@@ -379,6 +379,9 @@ function useRecoilValueLoadable_LEGACY<T>(
     return () => sub.release(store);
   }, [recoilValue, storeRef]);
 
+  // 从node中get数据
+  // return [new Map(), nullthrows(state.atomValues.get(key))];
+
   return getRecoilValueAsLoadable(storeRef.current, recoilValue);
 }
 
